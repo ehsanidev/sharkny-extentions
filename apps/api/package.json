@@ -1,0 +1,9 @@
+{
+  "name": "sharkny-extensions-api",
+  "description": "Laravel API for the Sharkny Extensions marketplace",
+  "type": "project",
+  "scripts": {
+    "serve": "php artisan serve",
+    "test": "php artisan test"
+  }
+}
