@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
 import './globals.css';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Sharkny Extensions',
-  description: 'Marketplace for premium WordPress extensions.'
+  description: 'Marketplace and builder studio for WordPress extensions.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
