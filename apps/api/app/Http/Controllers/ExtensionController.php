@@ -2,52 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Extension;
 use Illuminate\Http\Request;
 
 class ExtensionController extends Controller
 {
     public function index()
     {
+        $extensions = Extension::query()->orderBy('created_at', 'desc')->get();
+
         return response()->json([
-            'data' => [
-                [
-                    'id' => '1',
-                    'name' => 'SEO Optimization Pack',
-                    'category' => 'seo',
-                    'price' => 49,
-                    'status' => 'active',
-                    'description' => 'Meta control, schema blocks, and optimization workflows.',
-                ],
-                [
-                    'id' => '2',
-                    'name' => 'WooCommerce Conversion Booster',
-                    'category' => 'ecommerce',
-                    'price' => 79,
-                    'status' => 'active',
-                    'description' => 'Smart cart flows and conversion-focused enhancements.',
-                ],
-                [
-                    'id' => '3',
-                    'name' => 'AI Content Assistant',
-                    'category' => 'ai',
-                    'price' => 59,
-                    'status' => 'draft',
-                    'description' => 'Generate blog ideas and product copy from inside WordPress.',
-                ],
-            ],
+            'data' => $extensions->map(function ($extension) {
+                return [
+                    'id' => (string) $extension->_id,
+                    'name' => $extension->name,
+                    'category' => $extension->category,
+                    'price' => $extension->price,
+                    'status' => $extension->status,
+                    'description' => $extension->description,
+                    'featured' => $extension->featured ?? false,
+                    'rating' => $extension->rating ?? 4.8,
+                    'downloads' => $extension->downloads ?? 0,
+                ];
+            })->values(),
         ]);
     }
 
     public function show(string $id)
     {
+        $extension = Extension::findOrFail($id);
+
         return response()->json([
             'data' => [
-                'id' => $id,
-                'name' => 'SEO Optimization Pack',
-                'category' => 'seo',
-                'price' => 49,
-                'status' => 'active',
-                'description' => 'Meta control, schema blocks, and optimization workflows.',
+                'id' => (string) $extension->_id,
+                'name' => $extension->name,
+                'category' => $extension->category,
+                'price' => $extension->price,
+                'status' => $extension->status,
+                'description' => $extension->description,
+                'featured' => $extension->featured ?? false,
+                'rating' => $extension->rating ?? 4.8,
+                'downloads' => $extension->downloads ?? 0,
             ],
         ]);
     }
@@ -60,14 +55,27 @@ class ExtensionController extends Controller
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'status' => 'nullable|string|in:draft,active,review',
+            'featured' => 'nullable|boolean',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'downloads' => 'nullable|integer|min:0',
         ]);
 
-        $validated['id'] = (string) ((int) now()->format('U') + random_int(1000, 9999));
         $validated['status'] = $validated['status'] ?? 'draft';
+        $extension = Extension::create($validated);
 
         return response()->json([
             'message' => 'Extension created successfully.',
-            'data' => $validated,
+            'data' => [
+                'id' => (string) $extension->_id,
+                'name' => $extension->name,
+                'category' => $extension->category,
+                'price' => $extension->price,
+                'status' => $extension->status,
+                'description' => $extension->description,
+                'featured' => $extension->featured ?? false,
+                'rating' => $extension->rating ?? 4.8,
+                'downloads' => $extension->downloads ?? 0,
+            ],
         ], 201);
     }
 }

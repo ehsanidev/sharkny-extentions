@@ -15,5 +15,9 @@ class Extension extends Model
         'price',
         'status',
         'description',
+        'featured',
+        'rating',
+        'downloads',
+        'tags',
     ];
 }
