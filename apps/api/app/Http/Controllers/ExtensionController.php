@@ -1,67 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExtensionController;
+use App\Http\Controllers\HealthController;
+use Illuminate\Support\Facades\Route;
 
-use App\Models\Extension;
-use Illuminate\Http\Request;
+Route::get('/health', [HealthController::class, 'index']);
+Route::get('/stats', [DashboardController::class, 'index']);
+Route::get('/extensions', [ExtensionController::class, 'index']);
+Route::get('/extensions/{id}', [ExtensionController::class, 'show']);
+Route::post('/extensions', [ExtensionController::class, 'store']);
 
-class ExtensionController extends Controller
-{
-    public function index()
-    {
-        return response()->json([
-            'data' => [
-                [
-                    'id' => '1',
-                    'name' => 'SEO Optimization Pack',
-                    'category' => 'seo',
-                    'price' => 49,
-                    'status' => 'active',
-                ],
-                [
-                    'id' => '2',
-                    'name' => 'WooCommerce Conversion Booster',
-                    'category' => 'ecommerce',
-                    'price' => 79,
-                    'status' => 'active',
-                ],
-                [
-                    'id' => '3',
-                    'name' => 'AI Content Assistant',
-                    'category' => 'ai',
-                    'price' => 59,
-                    'status' => 'draft',
-                ],
-            ],
-        ]);
-    }
-
-    public function show(string $id)
-    {
-        return response()->json([
-            'data' => [
-                'id' => $id,
-                'name' => 'SEO Optimization Pack',
-                'category' => 'seo',
-                'price' => 49,
-                'status' => 'active',
-            ],
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category' => 'required|string|max:120',
-            'price' => 'required|numeric',
-        ]);
-
-        $extension = Extension::create($validated);
-
-        return response()->json([
-            'message' => 'Extension created successfully.',
-            'data' => $extension,
-        ], 201);
-    }
-}
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Route not found',
+    ], 404);
+});

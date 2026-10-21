@@ -1,8 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+namespace App\Http\Controllers;
 
-Route::get('/health', [\App\Http\Controllers\HealthController::class, 'index']);
-Route::get('/extensions', [\App\Http\Controllers\ExtensionController::class, 'index']);
-Route::get('/extensions/{id}', [\App\Http\Controllers\ExtensionController::class, 'show']);
-Route::post('/extensions', [\App\Http\Controllers\ExtensionController::class, 'store']);
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        return response()->json([
+            'data' => [
+                'totalExtensions' => 28,
+                'activeStores' => 18420,
+                'avgRating' => '4.9',
+                'developers' => 10,
+            ],
+        ]);
+    }
+}
