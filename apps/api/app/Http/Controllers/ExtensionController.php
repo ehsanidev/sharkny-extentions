@@ -1,18 +1,73 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ExtensionController;
-use App\Http\Controllers\HealthController;
-use Illuminate\Support\Facades\Route;
+namespace App\Http\Controllers;
 
-Route::get('/health', [HealthController::class, 'index']);
-Route::get('/stats', [DashboardController::class, 'index']);
-Route::get('/extensions', [ExtensionController::class, 'index']);
-Route::get('/extensions/{id}', [ExtensionController::class, 'show']);
-Route::post('/extensions', [ExtensionController::class, 'store']);
+use Illuminate\Http\Request;
 
-Route::fallback(function () {
-    return response()->json([
-        'message' => 'Route not found',
-    ], 404);
-});
+class ExtensionController extends Controller
+{
+    public function index()
+    {
+        return response()->json([
+            'data' => [
+                [
+                    'id' => '1',
+                    'name' => 'SEO Optimization Pack',
+                    'category' => 'seo',
+                    'price' => 49,
+                    'status' => 'active',
+                    'description' => 'Meta control, schema blocks, and optimization workflows.',
+                ],
+                [
+                    'id' => '2',
+                    'name' => 'WooCommerce Conversion Booster',
+                    'category' => 'ecommerce',
+                    'price' => 79,
+                    'status' => 'active',
+                    'description' => 'Smart cart flows and conversion-focused enhancements.',
+                ],
+                [
+                    'id' => '3',
+                    'name' => 'AI Content Assistant',
+                    'category' => 'ai',
+                    'price' => 59,
+                    'status' => 'draft',
+                    'description' => 'Generate blog ideas and product copy from inside WordPress.',
+                ],
+            ],
+        ]);
+    }
+
+    public function show(string $id)
+    {
+        return response()->json([
+            'data' => [
+                'id' => $id,
+                'name' => 'SEO Optimization Pack',
+                'category' => 'seo',
+                'price' => 49,
+                'status' => 'active',
+                'description' => 'Meta control, schema blocks, and optimization workflows.',
+            ],
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:120',
+            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'status' => 'nullable|string|in:draft,active,review',
+        ]);
+
+        $validated['id'] = (string) ((int) now()->format('U') + random_int(1000, 9999));
+        $validated['status'] = $validated['status'] ?? 'draft';
+
+        return response()->json([
+            'message' => 'Extension created successfully.',
+            'data' => $validated,
+        ], 201);
+    }
+}
