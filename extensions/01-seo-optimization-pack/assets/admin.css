@@ -1,0 +1,21 @@
+.sharkny-seo-wrap {
+    max-width: 960px;
+    margin-top: 24px;
+}
+
+.sharkny-seo-wrap .card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-top: 20px;
+}
+
+.sharkny-seo-wrap h2 {
+    margin-top: 0;
+}
+
+.sharkny-seo-wrap .form-table th {
+    width: 220px;
+}
