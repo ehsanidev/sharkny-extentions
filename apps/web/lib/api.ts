@@ -16,6 +16,41 @@ export type DashboardStats = {
 
 const defaultApiUrl = 'http://localhost:8000/api';
 
+const extensionSeed: Extension[] = [
+  {
+    id: '1',
+    name: 'SEO Optimization Pack',
+    category: 'seo',
+    price: 49,
+    status: 'active',
+    description: 'Meta control, schema blocks, and optimization workflows.',
+  },
+  {
+    id: '2',
+    name: 'WooCommerce Conversion Booster',
+    category: 'ecommerce',
+    price: 79,
+    status: 'active',
+    description: 'Smart cart flows and conversion-focused enhancements.',
+  },
+  {
+    id: '3',
+    name: 'AI Content Assistant',
+    category: 'ai',
+    price: 59,
+    status: 'draft',
+    description: 'Generate blog ideas and product copy from inside WordPress.',
+  },
+  {
+    id: '4',
+    name: 'Security Hardening Suite',
+    category: 'security',
+    price: 69,
+    status: 'review',
+    description: 'Protect login flows and lock down admin access.',
+  },
+];
+
 export async function getExtensions(): Promise<Extension[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl}/extensions`, {
@@ -25,32 +60,32 @@ export async function getExtensions(): Promise<Extension[]> {
       },
     });
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch extensions');
-    }
+    if (!res.ok) throw new Error('Failed to fetch extensions');
 
     const data = await res.json();
-    return Array.isArray(data?.data) ? data.data : [];
+    return Array.isArray(data?.data) ? data.data : extensionSeed;
   } catch (error) {
     console.error('Error fetching extensions:', error);
-    return [
-      {
-        id: 'fallback-1',
-        name: 'SEO Optimization Pack',
-        category: 'seo',
-        price: 49,
-        status: 'active',
-        description: 'Meta control, schema blocks, and optimization workflows.',
+    return extensionSeed;
+  }
+}
+
+export async function getExtensionById(id: string): Promise<Extension | null> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl}/extensions/${id}`, {
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
       },
-      {
-        id: 'fallback-2',
-        name: 'WooCommerce Conversion Booster',
-        category: 'ecommerce',
-        price: 79,
-        status: 'active',
-        description: 'Smart cart flows and conversion-focused enhancements.',
-      },
-    ];
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch extension');
+
+    const data = await res.json();
+    return data?.data ?? extensionSeed.find((item) => item.id === id) ?? null;
+  } catch (error) {
+    console.error(`Error fetching extension ${id}:`, error);
+    return extensionSeed.find((item) => item.id === id) ?? null;
   }
 }
 
@@ -63,9 +98,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       },
     });
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch stats');
-    }
+    if (!res.ok) throw new Error('Failed to fetch stats');
 
     const data = await res.json();
     return data?.data ?? {
