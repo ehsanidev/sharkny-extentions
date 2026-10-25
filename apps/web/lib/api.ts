@@ -7,12 +7,22 @@ export type Extension = {
   description?: string;
 };
 
+export type DashboardStats = {
+  totalExtensions: number;
+  activeStores: number;
+  avgRating: string;
+  developers: number;
+};
+
 const defaultApiUrl = 'http://localhost:8000/api';
 
 export async function getExtensions(): Promise<Extension[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl}/extensions`, {
       cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+      },
     });
 
     if (!res.ok) {
@@ -44,10 +54,13 @@ export async function getExtensions(): Promise<Extension[]> {
   }
 }
 
-export async function getDashboardStats() {
+export async function getDashboardStats(): Promise<DashboardStats> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl}/stats`, {
       cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+      },
     });
 
     if (!res.ok) {
@@ -83,6 +96,7 @@ export async function createExtension(payload: {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
     body: JSON.stringify(payload),
   });
